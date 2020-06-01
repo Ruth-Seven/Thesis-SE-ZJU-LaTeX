@@ -38,7 +38,7 @@ Created: 2014.09.15 by Sky and Hamburger,  Modified by Kwen String at 2016.04.08
 % 设置图片，表格头字体选项
 \RequirePackage{caption}
 % 并排图形。subfigure、subfig 已经不再推荐，并与新的 subcaption不兼容！！！
-\RequirePackage{subcaption}
+% \RequirePackage{subcaption}
 % 三线表
 \RequirePackage{booktabs}
 % 长表格宏包，tabu宏包longtabu环境需要。
@@ -68,6 +68,20 @@ Created: 2014.09.15 by Sky and Hamburger,  Modified by Kwen String at 2016.04.08
 	showspaces=false,
 	showtabs=false
 }
+
+%\makeatletter
+\def\thickhline{%
+  \noalign{\ifnum0=`}\fi\hrule \@height \thickarrayrulewidth \futurelet
+   \reserved@a\@xthickhline}
+\def\@xthickhline{\ifx\reserved@a\thickhline
+               \vskip\doublerulesep
+               \vskip-\thickarrayrulewidth
+             \fi
+      \ifnum0=`{\fi}}
+%\makeatother
+\newlength{\thickarrayrulewidth}
+\setlength{\thickarrayrulewidth}{3\arrayrulewidth}
+
 
 \RequirePackage[algoruled, algosection]{algorithm2e}
 
@@ -140,7 +154,8 @@ Created: 2014.09.15 by Sky and Hamburger,  Modified by Kwen String at 2016.04.08
 }
 \urlstyle{same}
 % 参考文献正文上标样式设置
-\RequirePackage[sort&compress,numbers]{natbib}
+%\RequirePackage[sort&compress,numbers]{natbib} %如果使用texlive2020，这里需要注释掉，详见README
+\RequirePackage[sort&compress]{gbt7714}
 % hypernat 可以让hyperref 和natbib 混合使用，但它需要放在这两者之后。
 \RequirePackage{hypernat}
 % 修复图表超链接不准的问题
@@ -309,7 +324,9 @@ Created: 2014.09.15 by Sky and Hamburger,  Modified by Kwen String at 2016.04.08
 \fi
 % 重新定义\chaptermark，使其为\leftmark引用。
 \renewcommand\chaptermark[1]{%
-\markboth{\MakeUppercase{%
+\markboth{
+% \MakeUppercase %页眉英文全部大写
+{%
 \ifnum \c@secnumdepth >\m@ne
 	\if@mainmatter
 		\@chapapp  \hskip1em%
@@ -319,9 +336,11 @@ Created: 2014.09.15 by Sky and Hamburger,  Modified by Kwen String at 2016.04.08
 
 %---------- 本机字体设置 ----------
 \RequirePackage{fontspec}
-\setmainfont{TeX Gyre Termes}	%相当于MS Word中的Times New Roman。
-\setsansfont{TeX Gyre Heros}	%相当于MS Word中的Helvetica。
-\setmonofont{TeX Gyre Cursor}	%相当于MS Word中的Curier。
+%% 不知道剩下俩个用在哪里，先注释掉
+\setmainfont{Times New Roman}
+%\setmainfont{TeX Gyre Termes}	%相当于MS Word中的Times New Roman。
+%\setsansfont{TeX Gyre Heros}	%相当于MS Word中的Helvetica。
+%\setmonofont{TeX Gyre Cursor}	%相当于MS Word中的Curier。
 \RequirePackage{xeCJK}
 
 % xeCJK 环境初始化
@@ -345,12 +364,16 @@ Created: 2014.09.15 by Sky and Hamburger,  Modified by Kwen String at 2016.04.08
 
 % 设置中文正文字体为仿宋，加粗为黑体，斜体为楷体
 % 除非您使用windows操作系统编译论文，否则强烈不推荐使用微软系的字体
-\setCJKmainfont[BoldFont={Adobe Heiti Std}, ItalicFont={Adobe Kaiti Std}]{Adobe Fangsong Std}
+% \setCJKmainfont[BoldFont={Adobe Heiti Std}, ItalicFont={Adobe Kaiti Std}]{Adobe Fangsong Std}
+
+% 设置 CJK 主字体，也就是设置 \rmfamily 的 CJK 字体
+\setCJKmainfont[AutoFakeBold]{FangSong_GB2312}
+\renewcommand{\fangsong}{\rmfamily} % 这样就可以使用粗体辽
+
 %\setCJKfallbackfamilyfont{\CJKrmdefault}[BoldFont={Adobe Heiti Std}, ItalicFont={Adobe Kaiti Std}]{Adobe Fangsong Std}
 % 由于汉字都是等宽的，等宽字体通常应用在代码段或verbatim环境中，故这里选用黑体后更改。
 %\setCJKmonofont{Noto Sans CJK SC} % 十分优雅美观的思源黑体
-\setCJKmonofont{Adobe Heiti Std}
-
+\setCJKmonofont{Adobe Heiti Std} %主要负责代码的中文字体
 %---------% 封面及中英标题页 ----------
 % 定义封面及标题页设置中常用的下划线命令（默认宽度90pt）
 \renewcommand\ULthickness{0.8pt}			% 重新定义下划线的厚度
@@ -364,6 +387,16 @@ Created: 2014.09.15 by Sky and Hamburger,  Modified by Kwen String at 2016.04.08
 	\makeOSpage
 }
 % 封面
+\newcommand{\tisc}[1]{{\fontspec
+    [
+        Letters = SmallCaps,
+        Kerning = On,
+    ]
+    {Times New Roman}%
+    \fontsize{16}{20}\selectfont
+    #1%
+    \par}}
+    
 \newcommand\ZJUmakecover{
 	\cleardoublepage
 	\pdfbookmark[0]{封面}{anchor_cover}
@@ -392,13 +425,13 @@ Created: 2014.09.15 by Sky and Hamburger,  Modified by Kwen String at 2016.04.08
 		\begin{tabular}[t]{>{\zihao{3}\songti\mdseries}rl}
 			中文论文题目: &
 			{\begin{minipage}[t][60pt][t]{\titleulwidth@cover}
-				\zihao{-2} \fangsong\bfseries
+				\fontsize{18}{18}\fangsong\bfseries
 				\uline{\ZJU@title\hfill}
 			\end{minipage}} \\%[20pt]
-			\rule{0pt}{10mm}英文论文题目: &
+			\rule{0pt}{6mm}英文论文题目: &
 			{\begin{minipage}[t][60pt][t]{\titleulwidth@cover}
 				\newlength{\etitlelength}
-				\fontsize{16}{23}\bfseries
+				\fontsize{18}{18}\bfseries
 				\settowidth{\etitlelength}{\ZJU@englishtitle}
 % 使封面英文标题下划线数量能够适应因英文标题内容长短变化而引起的英文标题行数变化
 % 而引起的下划线行数变化，下划线行数就是英文标题行数。目前最大的支持行数为3行，
@@ -413,15 +446,16 @@ Created: 2014.09.15 by Sky and Hamburger,  Modified by Kwen String at 2016.04.08
 						\rule{\titleulwidth@cover}{\ULthickness}\\*
 						\rule{\titleulwidth@cover}{\ULthickness}}}
 				\else\ifdim\etitlelength<3\titleulwidth@cover
-						\raisebox{103pt}[0pt][0pt]{\parbox[t][][t]{\titleulwidth@cover}{
+						\raisebox{77pt}[0pt][0pt]{\parbox[t][][t]{\titleulwidth@cover}{
 						\rule{\titleulwidth@cover}{\ULthickness}\\*
+%						\vskip 18mm
 						\rule{\titleulwidth@cover}{\ULthickness}\\*
 						\rule{\titleulwidth@cover}{\ULthickness}}}
 				\fi\fi\fi
 			\end{minipage}}\\*
 		\end{tabular}
 
-		\vskip 9mm
+		\vskip 12mm
 		\begin{tabular}{>{\zihao{4}\songti}l>{\zihao{4}\fangsong}l}
 			%申请人姓名: & \ZJUunderline[200pt]{\ZJU@author} \\[3mm]
 			% 由于本模板无法整齐排印生僻字（原因不明）
@@ -626,7 +660,7 @@ Created: 2014.09.15 by Sky and Hamburger,  Modified by Kwen String at 2016.04.08
 					\rule{\etitlelength}{\ULthickness}}}
 			\else\ifdim\etitlelength<3\etitle@width
 					\addtolength{\etitlelength}{-2\etitle@width}
-					\addtolength{\etitlelength}{80pt}
+					\addtolength{\etitlelength}{150pt} % 最后一行下划线？
 					\raisebox{85pt}[0pt][0pt]{\parbox[t][][t]{\etitle@width}{
 					\centering
 					\rule{\etitle@width}{\ULthickness}\\*
@@ -656,7 +690,14 @@ Created: 2014.09.15 by Sky and Hamburger,  Modified by Kwen String at 2016.04.08
 		Thesis Reviewer 3: & \ZJUunderline[240pt]{\ZJU@enreviewerC}\\[2mm]
 	    Thesis Reviewer 4: & \ZJUunderline[240pt]{\ZJU@enreviewerD}\\[2mm]
 		Thesis Reviewer 5: & \ZJUunderline[240pt]{\ZJU@enreviewerE}\\[10mm]
-		Examining Committe Chair: & \ZJUunderline[240pt]{\ZJU@enchairperson}\\[2mm]
+% 		Examining Committe Chair: & \ZJUunderline[240pt]{\ZJU@enchairperson}\\[2mm]
+		\multicolumn{2}{>{\zihao{4}}l}{{\qquad \quad}Chair:} \uline{\hfill} \\[-10pt]
+		\multicolumn{2}{l} {
+			\hspace*{-0.8cm}
+			\begin{tabular}{>{\zihao{4}}l>{\zihao{4}}l}
+			\multicolumn{2}{l}{(Committee of oral defence)}
+		\end{tabular} 
+		}\\ [-2mm]
 	    Committeeman 1: & \ZJUunderline[240pt]{\ZJU@encommissionerA}\\[2mm]
 	    Committeeman 2: & \ZJUunderline[240pt]{\ZJU@encommissionerB}\\[2mm]
 	    Committeeman 3: & \ZJUunderline[240pt]{\ZJU@encommissionerC}\\[2mm]
@@ -699,6 +740,10 @@ Created: 2014.09.15 by Sky and Hamburger,  Modified by Kwen String at 2016.04.08
 }
 
 % 独创声明与版权协议转让页
+\let\kaishu\relax % 清除旧定义
+
+\newCJKfontfamily\kaishu{KaiTi}[AutoFakeBold] % 重定义 \kaishu
+
 \newcommand\makeOSpage{%
 	\cleardoublepage
 	\pdfbookmark[0]{独创性声明}{anchor_os}
@@ -780,8 +825,10 @@ Created: 2014.09.15 by Sky and Hamburger,  Modified by Kwen String at 2016.04.08
 	\@makechapterhead{#2}
 	\@afterheading}		% 不知道这个\@afterheading有什么用，先放着。
 \def\@makechapterhead#1{%
-	\vspace*{20\p@}%
-	{\parindent \z@ \centering
+	% \vspace*{24\p@} %章节距下划线的距离
+	{
+	\vskip 24\p@ % 段前 24pt
+	\parindent \z@ \centering
 	\fangsong\zihao{-3} \bfseries
 	\ifnum \c@secnumdepth >\m@ne
 		\if@mainmatter
@@ -790,7 +837,9 @@ Created: 2014.09.15 by Sky and Hamburger,  Modified by Kwen String at 2016.04.08
 	\fi
 	\interlinepenalty\@M
 	 #1\par\nobreak
-	\vskip 24\p@}}
+	\vskip 18\p@ % 段后 18pt
+	}
+	}
 \def\@schapter#1{%
 	\@makeschapterhead{#1}
 	\@afterheading}
@@ -890,9 +939,9 @@ Created: 2014.09.15 by Sky and Hamburger,  Modified by Kwen String at 2016.04.08
 	\fi}
 
 %---------- 三种目录 ----------
-\renewcommand{\contentsname}{目\texorpdfstring{\ZJUspace}{}录}				% 重命名章节目录名。
-\renewcommand{\listfigurename}{图\texorpdfstring{\ZJUspace}{}目\texorpdfstring{\ZJUspace}{}录}			% 重命名插图目录名。
-\renewcommand{\listtablename}{表\texorpdfstring{\ZJUspace}{}目\texorpdfstring{\ZJUspace}{}录}				% 重命名表目录名。
+\renewcommand{\contentsname}{目录}				% 重命名章节目录名。
+\renewcommand{\listfigurename}{图目录}			% 重命名插图目录名。
+\renewcommand{\listtablename}{表目录}				% 重命名表目录名。
 
 % 下一条命令作用：在toc目录文件中插入‘\let\CTEX@spaceChar\relax’字符，用以删除目
 % 录中的空格字符，其空格字符由\CTEX@spaceChar定义。
@@ -971,6 +1020,9 @@ Created: 2014.09.15 by Sky and Hamburger,  Modified by Kwen String at 2016.04.08
 	\chapter{\listfigurename}
 	\@starttoc{lof}}
 
+% 图目录前「图、表」字
+% \patchcmd{\@caption}{\csname the#1\endcsname}{\csname fnum@#1\endcsname}{}{}
+
 \renewcommand*\l@figure{\@dottedtocline{1}{0\p@}{2.3em}}
 
 %% 表目录
@@ -1004,9 +1056,9 @@ Created: 2014.09.15 by Sky and Hamburger,  Modified by Kwen String at 2016.04.08
        {\@latex@warning{Empty `thebibliography' environment}}%
       \endlist}
 
-% 采用gbt7714-2005参考文献样式，
-% 参考自https://github.com/githamburger/GBT7714-2005-BibTeX-Style
-\bibliographystyle{gbt7714-2005}
+% 参考文献样式（一般不需要修改，若需，可参考 https://github.com/CTeX-org/gbt7714-bibtex-style 和 https://github.com/CTeX-org/gbt7714-bibtex-style/compare/v1.1.1...master#diff-4ac32a78649ca5bdd8e0ba38b7006a1eR21）
+
+%\bibliographystyle{gbt7714-numerical} 
 
 % natbib宏包命令，参考文献上标设置。
 \setcitestyle{super,square,comma}
@@ -1017,13 +1069,21 @@ Created: 2014.09.15 by Sky and Hamburger,  Modified by Kwen String at 2016.04.08
 \AtBeginDocument{%
 	\let\oldref\ref%
 	\renewcommand*{\ref}[1]{\thinspace\oldref{#1}}%
-	\renewcommand*{\eqref}[1]{(\oldref{#1})}
+	\renewcommand*{\eqref}[1]{式(\oldref{#1})}
 }
 
 % ---------- 浮动体相关定义 ----------
 % 设置浮动环境标题的字体大小。根据学位论文格式要求，插图和表格标题字体需要比正文
 % 字体略小。
+
+% 自定义临时前缀
+\DeclareCaptionOption{addlabel}{\def\caption@addlabel{#1}}
+% new format
+\DeclareCaptionLabelFormat{addlabel}{\caption@addlabel#1~#2~}
+
 \captionsetup{%
+	labelformat=addlabel,
+	addlabel={},   % additional label text, initial empty
 	format=hang,
 	labelsep=quad,		% 去掉图表号后的冒号。图序与图名文字之间空一个汉字宽度。
 	skip=10pt,			% 标题与图标之间空10pt距离。
@@ -1031,8 +1091,12 @@ Created: 2014.09.15 by Sky and Hamburger,  Modified by Kwen String at 2016.04.08
 	width=.75\textwidth}% 标题最大宽度为0.75倍正文宽度。
 
 % 根据学位论文格式要求，表格的标题必须位于表格上方，插图的标题必须位于插图下方。
-\captionsetup[table]{position=above}
-\captionsetup[figure]{position=below}
+
+\DeclareCaptionListFormat{tablenew}{\tablename#1~#2}%
+\captionsetup[table]{position=above, listformat=tablenew}
+
+\DeclareCaptionListFormat{figurenew}{\figurename#1~#2}%
+\captionsetup[figure]{position=below, listformat=figurenew}
 
 %% 以下为设置浮动对象和文字之间的距离。
 % 版心顶部或者版心底部浮动体之间的垂直距离，默认为12pt plus 2pt minus 2pt。
@@ -1074,7 +1138,7 @@ Created: 2014.09.15 by Sky and Hamburger,  Modified by Kwen String at 2016.04.08
 % ---------- 中英文摘要及关键词 ----------
 % 中文摘要环境
 \newenvironment{cabstract}{%
-	\chapter{摘\texorpdfstring{\ZJUspace}{}要}}{}
+	\chapter{摘要}}{}
 \newenvironment{eabstract}{%
 	\chapter{Abstract}}{}
 
@@ -1212,3 +1276,35 @@ Created: 2014.09.15 by Sky and Hamburger,  Modified by Kwen String at 2016.04.08
 	{\ding{200}} %
 	{\ding{201}}}
 \setfnsymbol{circlednumber}
+
+% 多引用
+\newcommand\Autoref[1]{\@first@ref#1,@}
+\def\@throw@dot#1.#2@{#1}% discard everything after the dot
+\def\@set@refname#1{%    % set \@refname to autoefname+s using \getrefbykeydefault
+    \edef\@tmp{\getrefbykeydefault{#1}{anchor}{}}%
+    \xdef\@tmp{\expandafter\@throw@dot\@tmp.@}%
+    \ltx@IfUndefined{\@tmp autorefnameplural}%
+         {\def\@refname{\@nameuse{\@tmp autorefname}}}% % 负数
+         {\def\@refname{\@nameuse{\@tmp autorefnameplural}}}%
+}
+\def\@first@ref#1,#2{%
+  \ifx#2@\autoref{#1}\let\@nextref\@gobble% only one ref, revert to normal \autoref
+  \else%
+    \@set@refname{#1}%  set \@refname to autoref name
+    \@refname~\ref{#1}% add autoefname and first reference
+    \let\@nextref\@next@ref% push processing to \@next@ref
+  \fi%
+  \@nextref#2%
+}
+\def\@next@ref#1,#2{%
+   \ifx#2@ 和~\ref{#1}\let\@nextref\@gobble% at end: print and+\ref and stop
+   \else，\ref{#1}% print  ,+\ref and continue
+   \fi%
+   \@nextref#2%
+}
+
+\RequirePackage{float}
+\RequirePackage{multirow}
+\RequirePackage{tabularx}
+\RequirePackage{enumitem}
+\RequirePackage{cleveref}
