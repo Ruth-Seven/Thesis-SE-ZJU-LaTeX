@@ -310,7 +310,7 @@ Created: 2014.09.15 by Sky and Hamburger, Last Modified: 2014.09.12 by Hamburger
 	%学\ZJUspace 号：\ZJUunderline[60pt]{\if@anon\else\ZJU@studentnumber\fi} \par
 	% \vspace{10mm}
 	\begin{center}
-		\includegraphics[width=60mm,trim=0 -30 0 -100]{./logo/ZJDX.pdf}\par
+		\includegraphics[width=60mm,trim=0 -30 0 -100]{../figures/logo/ZJDX.pdf}\par
 		\vspace{4mm}
 		{
 			\if@doctor
@@ -320,7 +320,7 @@ Created: 2014.09.15 by Sky and Hamburger, Last Modified: 2014.09.12 by Hamburger
 			\fi
 		}\par
 		\vspace{6mm}
-		\includegraphics[width=22.8mm]{./logo/QSY.pdf}
+		\includegraphics[width=22.8mm]{../figures/logo/QSY.pdf}
 	\end{center}
 	\vspace{6mm}
 	% 新建一个长度寄存器，存放封面标题下划线宽度值
@@ -685,15 +685,17 @@ Created: 2014.09.15 by Sky and Hamburger, Last Modified: 2014.09.12 by Hamburger
 \captionsetup[figure]{position=below}
 
 % 中英文双语bicaption定义
-\captionsetup[bi-first]{bi-first}
-\captionsetup[bi-second]{bi-second, list=off}
-
 \DeclareCaptionOption{bi-first}[]{%
   \def\tablename{表}%
   \def\figurename{图}}
 \DeclareCaptionOption{bi-second}[]{%
   \def\tablename{Tab}%
   \def\figurename{Fig}}
+  
+\captionsetup[bi-first]{bi-first}
+\captionsetup[bi-second]{bi-second, list=off}
+
+
 
 %% 以下为设置浮动对象和文字之间的距离。
 % 版心顶部或者版心底部浮动体之间的垂直距离，默认为12pt plus 2pt minus 2pt。

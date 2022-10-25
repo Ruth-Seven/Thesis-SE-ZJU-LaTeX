@@ -409,13 +409,13 @@ Created: 2014.09.15 by Sky and Hamburger,  Modified by Kwen String at 2016.04.08
 	学\ZJUspace 号：\ZJUunderline[60pt]{\ZJU@studentnumber} \par
 	\vspace{9mm}
 	\begin{center}
-		\includegraphics[width=60mm]{./logo/ZJDX.pdf}\par
+		\includegraphics[width=60mm]{../figures/logo/ZJDX.pdf}\par
 		\vspace{4mm}
 		{
 		    {\songti \zihao{-1}硕士学位论文}
 		}\par
 		\vspace{6mm}
-		\includegraphics[width=22.8mm]{./logo/QSY.pdf}
+		\includegraphics[width=22.8mm]{../figures/logo/QSY.pdf}
 	\end{center}
 	\vspace{6mm}
 	% 新建一个长度寄存器，存放封面标题下划线宽度值
@@ -570,7 +570,7 @@ Created: 2014.09.15 by Sky and Hamburger,  Modified by Kwen String at 2016.04.08
 		\fi\fi\fi
 	\end{center}
 	\begin{center}
-		\includegraphics[width=22.8mm]{./logo/QSY.pdf}
+		\includegraphics[width=22.8mm]{../figures/logo/QSY.pdf}
 	\end{center}
 	\vspace{4mm}
 	\begin{center}
@@ -670,7 +670,7 @@ Created: 2014.09.15 by Sky and Hamburger,  Modified by Kwen String at 2016.04.08
 		\end{minipage}
 	\end{center}
 	\begin{center}
-		\includegraphics[width=22.8mm]{./logo/QSY.pdf}
+		\includegraphics[width=22.8mm]{../figures/logo/QSY.pdf}
 	\end{center}
 	%\vspace{6mm}
 	\vspace{5mm}
